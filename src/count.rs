@@ -94,6 +94,18 @@ mod tests {
     }
 
     #[test]
+    fn read_invalid_utf8_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("invalid.bin");
+        // Invalid UTF-8: 0xFF is never valid in any position
+        std::fs::write(&path, &[0xFF, 0xFE, 0x68, 0x65, 0x6C, 0x6C, 0x6F]).unwrap();
+        match read_text_file(&path) {
+            Err(FileError::Binary(_)) => {}
+            other => panic!("expected Binary error for invalid UTF-8, got {other:?}"),
+        }
+    }
+
+    #[test]
     fn read_empty_file() {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("empty.txt");

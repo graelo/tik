@@ -60,6 +60,15 @@ fn list_models_outputs_tab_separated_sorted() {
 }
 
 #[test]
+fn list_models_ignores_file_args() {
+    tokky()
+        .args(["--list-models", "nonexistent.txt"])
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("cl100k_base"));
+}
+
+#[test]
 fn list_encodings_ignores_file_args() {
     // --list-encodings should work even if files are given
     tokky()

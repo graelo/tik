@@ -69,6 +69,32 @@ fn single_file_binary() {
 }
 
 #[test]
+fn single_file_whitespace_only() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("spaces.txt");
+    std::fs::write(&path, "   \n\t\n  ").unwrap();
+
+    tokky()
+        .arg(path.to_str().unwrap())
+        .assert()
+        .success()
+        .stdout(predicate::str::is_match(r"^\d+\n$").unwrap());
+}
+
+#[test]
+fn single_file_invalid_utf8() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("invalid.bin");
+    std::fs::write(&path, &[0xFF, 0xFE, 0x68, 0x65]).unwrap();
+
+    tokky()
+        .arg(path.to_str().unwrap())
+        .assert()
+        .failure()
+        .stderr(predicate::str::contains("Binary file"));
+}
+
+#[test]
 fn single_file_empty() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("empty.txt");
