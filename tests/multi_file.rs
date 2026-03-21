@@ -2,8 +2,8 @@ use assert_cmd::Command;
 use predicates::prelude::*;
 use std::io::Write;
 
-fn tokky() -> Command {
-    Command::cargo_bin("tokky").unwrap()
+fn tik() -> Command {
+    Command::cargo_bin("tik").unwrap()
 }
 
 #[test]
@@ -14,7 +14,7 @@ fn two_valid_files() {
     std::fs::write(&a, "hello").unwrap();
     std::fs::write(&b, "world").unwrap();
 
-    let output = tokky()
+    let output = tik()
         .arg(a.to_str().unwrap())
         .arg(b.to_str().unwrap())
         .assert()
@@ -39,7 +39,7 @@ fn binary_file_silently_skipped() {
     let mut f = std::fs::File::create(&bin).unwrap();
     f.write_all(&[0x00, 0x01, 0x02]).unwrap();
 
-    let output = tokky()
+    let output = tik()
         .arg(text.to_str().unwrap())
         .arg(bin.to_str().unwrap())
         .assert()
@@ -60,9 +60,9 @@ fn partial_failure_missing_file() {
     let valid = dir.path().join("valid.txt");
     std::fs::write(&valid, "hello world").unwrap();
 
-    tokky()
+    tik()
         .arg(valid.to_str().unwrap())
-        .arg("/tmp/tokky_test_nonexistent_xyz")
+        .arg("/tmp/tik_test_nonexistent_xyz")
         .assert()
         .failure()
         .stdout(predicate::str::contains(valid.to_str().unwrap()))
@@ -77,7 +77,7 @@ fn output_order_matches_argument_order() {
     std::fs::write(&z, "first").unwrap();
     std::fs::write(&a, "second").unwrap();
 
-    let output = tokky()
+    let output = tik()
         .arg(z.to_str().unwrap())
         .arg(a.to_str().unwrap())
         .assert()

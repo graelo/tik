@@ -5,8 +5,8 @@ use tiktoken::CoreBpe;
 /// Priority order:
 /// 1. --encoding flag
 /// 2. --model flag
-/// 3. TOKKY_ENCODING env var
-/// 4. TOKKY_MODEL env var
+/// 3. TIK_ENCODING env var
+/// 4. TIK_MODEL env var
 /// 5. Default: cl100k_base
 pub fn resolve(
     encoding_flag: Option<&str>,
@@ -20,11 +20,11 @@ pub fn resolve(
         return get_by_model_name(name);
     }
 
-    if let Ok(name) = std::env::var("TOKKY_ENCODING") {
+    if let Ok(name) = std::env::var("TIK_ENCODING") {
         return get_by_encoding_name(&name);
     }
 
-    if let Ok(name) = std::env::var("TOKKY_MODEL") {
+    if let Ok(name) = std::env::var("TIK_MODEL") {
         return get_by_model_name(&name);
     }
 

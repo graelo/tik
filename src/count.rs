@@ -86,7 +86,7 @@ mod tests {
 
     #[test]
     fn read_nonexistent_file() {
-        let path = Path::new("/tmp/tokky_test_nonexistent_file_xyz");
+        let path = Path::new("/tmp/tik_test_nonexistent_file_xyz");
         match read_text_file(path) {
             Err(FileError::NotFound(_)) => {}
             other => panic!("expected NotFound error, got {other:?}"),

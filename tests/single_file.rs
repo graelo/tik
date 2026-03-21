@@ -2,8 +2,8 @@ use assert_cmd::Command;
 use predicates::prelude::*;
 use std::io::Write;
 
-fn tokky() -> Command {
-    Command::cargo_bin("tokky").unwrap()
+fn tik() -> Command {
+    Command::cargo_bin("tik").unwrap()
 }
 
 #[test]
@@ -12,7 +12,7 @@ fn single_file_default_encoding() {
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    tokky()
+    tik()
         .arg(path.to_str().unwrap())
         .assert()
         .success()
@@ -25,7 +25,7 @@ fn single_file_with_encoding_flag() {
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    tokky()
+    tik()
         .args(["-e", "o200k_base", path.to_str().unwrap()])
         .assert()
         .success()
@@ -38,7 +38,7 @@ fn single_file_with_model_flag() {
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    tokky()
+    tik()
         .args(["-m", "gpt-4o", path.to_str().unwrap()])
         .assert()
         .success()
@@ -47,8 +47,8 @@ fn single_file_with_model_flag() {
 
 #[test]
 fn single_file_not_found() {
-    tokky()
-        .arg("/tmp/tokky_test_nonexistent_xyz")
+    tik()
+        .arg("/tmp/tik_test_nonexistent_xyz")
         .assert()
         .failure()
         .stderr(predicate::str::contains("No such file"));
@@ -61,7 +61,7 @@ fn single_file_binary() {
     let mut f = std::fs::File::create(&path).unwrap();
     f.write_all(&[0x00, 0x01, 0x02]).unwrap();
 
-    tokky()
+    tik()
         .arg(path.to_str().unwrap())
         .assert()
         .failure()
@@ -74,7 +74,7 @@ fn single_file_whitespace_only() {
     let path = dir.path().join("spaces.txt");
     std::fs::write(&path, "   \n\t\n  ").unwrap();
 
-    tokky()
+    tik()
         .arg(path.to_str().unwrap())
         .assert()
         .success()
@@ -87,7 +87,7 @@ fn single_file_invalid_utf8() {
     let path = dir.path().join("invalid.bin");
     std::fs::write(&path, &[0xFF, 0xFE, 0x68, 0x65]).unwrap();
 
-    tokky()
+    tik()
         .arg(path.to_str().unwrap())
         .assert()
         .failure()
@@ -100,7 +100,7 @@ fn single_file_empty() {
     let path = dir.path().join("empty.txt");
     std::fs::write(&path, "").unwrap();
 
-    tokky()
+    tik()
         .arg(path.to_str().unwrap())
         .assert()
         .success()

@@ -49,14 +49,14 @@ fn run(args: Args) -> ExitCode {
     let enc = match encoding::resolve(args.encoding.as_deref(), args.model.as_deref()) {
         Ok(enc) => enc,
         Err(msg) => {
-            eprintln!("tokky: {msg}");
+            eprintln!("tik: {msg}");
             return ExitCode::FAILURE;
         }
     };
 
     if args.files.is_empty() {
         if std::io::IsTerminal::is_terminal(&std::io::stdin()) {
-            eprintln!("tokky: no input. Usage: tokky [OPTIONS] [FILE...]");
+            eprintln!("tik: no input. Usage: tik [OPTIONS] [FILE...]");
             return ExitCode::FAILURE;
         }
         match count::count_stdin(enc) {
@@ -65,7 +65,7 @@ fn run(args: Args) -> ExitCode {
                 ExitCode::SUCCESS
             }
             Err(e) => {
-                eprintln!("tokky: {e}");
+                eprintln!("tik: {e}");
                 ExitCode::FAILURE
             }
         }
@@ -77,15 +77,15 @@ fn run(args: Args) -> ExitCode {
                 ExitCode::SUCCESS
             }
             Err(count::FileError::NotFound(p)) => {
-                eprintln!("tokky: {p}: No such file");
+                eprintln!("tik: {p}: No such file");
                 ExitCode::FAILURE
             }
             Err(count::FileError::Binary(p)) => {
-                eprintln!("tokky: {p}: Binary file");
+                eprintln!("tik: {p}: Binary file");
                 ExitCode::FAILURE
             }
             Err(count::FileError::Read(p, reason)) => {
-                eprintln!("tokky: {p}: {reason}");
+                eprintln!("tik: {p}: {reason}");
                 ExitCode::FAILURE
             }
         }
@@ -97,11 +97,11 @@ fn run(args: Args) -> ExitCode {
                 Ok(n) => output::print_multi(file, n),
                 Err(count::FileError::Binary(_)) => {}
                 Err(count::FileError::NotFound(p)) => {
-                    eprintln!("tokky: {p}: No such file");
+                    eprintln!("tik: {p}: No such file");
                     had_error = true;
                 }
                 Err(count::FileError::Read(p, reason)) => {
-                    eprintln!("tokky: {p}: {reason}");
+                    eprintln!("tik: {p}: {reason}");
                     had_error = true;
                 }
             }

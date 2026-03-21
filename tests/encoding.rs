@@ -1,8 +1,8 @@
 use assert_cmd::Command;
 use predicates::prelude::*;
 
-fn tokky() -> Command {
-    Command::cargo_bin("tokky").unwrap()
+fn tik() -> Command {
+    Command::cargo_bin("tik").unwrap()
 }
 
 #[test]
@@ -11,7 +11,7 @@ fn encoding_flag_selects_encoding() {
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    tokky()
+    tik()
         .args(["-e", "o200k_base", path.to_str().unwrap()])
         .assert()
         .success()
@@ -24,7 +24,7 @@ fn model_flag_resolves_to_encoding() {
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    tokky()
+    tik()
         .args(["-m", "gpt-4o", path.to_str().unwrap()])
         .assert()
         .success()
@@ -37,7 +37,7 @@ fn both_flags_error() {
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    tokky()
+    tik()
         .args(["-e", "cl100k_base", "-m", "gpt-4o", path.to_str().unwrap()])
         .assert()
         .failure()
@@ -45,13 +45,13 @@ fn both_flags_error() {
 }
 
 #[test]
-fn env_var_tokky_encoding() {
+fn env_var_tik_encoding() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    tokky()
-        .env("TOKKY_ENCODING", "o200k_base")
+    tik()
+        .env("TIK_ENCODING", "o200k_base")
         .arg(path.to_str().unwrap())
         .assert()
         .success()
@@ -59,13 +59,13 @@ fn env_var_tokky_encoding() {
 }
 
 #[test]
-fn env_var_tokky_model() {
+fn env_var_tik_model() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    tokky()
-        .env("TOKKY_MODEL", "gpt-4o")
+    tik()
+        .env("TIK_MODEL", "gpt-4o")
         .arg(path.to_str().unwrap())
         .assert()
         .success()
@@ -80,8 +80,8 @@ fn flag_overrides_env_var() {
 
     // Use cl100k_base via flag, even though env says o200k_base
     // Both should produce a count, but the flag should win
-    tokky()
-        .env("TOKKY_MODEL", "gpt-4o")
+    tik()
+        .env("TIK_MODEL", "gpt-4o")
         .args(["-e", "cl100k_base", path.to_str().unwrap()])
         .assert()
         .success()
@@ -106,7 +106,7 @@ fn all_nine_encodings_accepted() {
         "mistral_v3",
     ];
     for enc in encodings {
-        tokky()
+        tik()
             .args(["-e", enc, path.to_str().unwrap()])
             .assert()
             .success()
@@ -128,7 +128,7 @@ fn model_prefixes_across_providers() {
         "mistral-large", // Mistral -> mistral_v3
     ];
     for model in models {
-        tokky()
+        tik()
             .args(["-m", model, path.to_str().unwrap()])
             .assert()
             .success()
@@ -137,15 +137,15 @@ fn model_prefixes_across_providers() {
 }
 
 #[test]
-fn tokky_encoding_env_takes_priority_over_tokky_model_env() {
+fn tik_encoding_env_takes_priority_over_tik_model_env() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    // Both env vars set — TOKKY_ENCODING should win
-    tokky()
-        .env("TOKKY_ENCODING", "cl100k_base")
-        .env("TOKKY_MODEL", "gpt-4o")
+    // Both env vars set — TK_ENCODING should win
+    tik()
+        .env("TIK_ENCODING", "cl100k_base")
+        .env("TIK_MODEL", "gpt-4o")
         .arg(path.to_str().unwrap())
         .assert()
         .success()
@@ -153,13 +153,13 @@ fn tokky_encoding_env_takes_priority_over_tokky_model_env() {
 }
 
 #[test]
-fn invalid_tokky_encoding_env_var() {
+fn invalid_tik_encoding_env_var() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    tokky()
-        .env("TOKKY_ENCODING", "bogus_encoding")
+    tik()
+        .env("TIK_ENCODING", "bogus_encoding")
         .arg(path.to_str().unwrap())
         .assert()
         .failure()
@@ -167,13 +167,13 @@ fn invalid_tokky_encoding_env_var() {
 }
 
 #[test]
-fn invalid_tokky_model_env_var() {
+fn invalid_tik_model_env_var() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    tokky()
-        .env("TOKKY_MODEL", "nonexistent-model-xyz")
+    tik()
+        .env("TIK_MODEL", "nonexistent-model-xyz")
         .arg(path.to_str().unwrap())
         .assert()
         .failure()
@@ -186,7 +186,7 @@ fn unknown_encoding_lists_valid_options() {
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    tokky()
+    tik()
         .args(["-e", "bogus", path.to_str().unwrap()])
         .assert()
         .failure()
@@ -202,7 +202,7 @@ fn unknown_model_suggests_list_models() {
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
-    tokky()
+    tik()
         .args(["-m", "nonexistent-model-xyz", path.to_str().unwrap()])
         .assert()
         .failure()

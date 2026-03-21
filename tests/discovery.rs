@@ -1,13 +1,13 @@
 use assert_cmd::Command;
 use predicates::prelude::*;
 
-fn tokky() -> Command {
-    Command::cargo_bin("tokky").unwrap()
+fn tik() -> Command {
+    Command::cargo_bin("tik").unwrap()
 }
 
 #[test]
 fn list_encodings_outputs_nine_lines_sorted() {
-    let output = tokky()
+    let output = tik()
         .arg("--list-encodings")
         .assert()
         .success()
@@ -32,7 +32,7 @@ fn list_encodings_outputs_nine_lines_sorted() {
 
 #[test]
 fn list_models_outputs_tab_separated_sorted() {
-    let output = tokky()
+    let output = tik()
         .arg("--list-models")
         .assert()
         .success()
@@ -61,7 +61,7 @@ fn list_models_outputs_tab_separated_sorted() {
 
 #[test]
 fn list_models_ignores_file_args() {
-    tokky()
+    tik()
         .args(["--list-models", "nonexistent.txt"])
         .assert()
         .success()
@@ -71,7 +71,7 @@ fn list_models_ignores_file_args() {
 #[test]
 fn list_encodings_ignores_file_args() {
     // --list-encodings should work even if files are given
-    tokky()
+    tik()
         .args(["--list-encodings", "nonexistent.txt"])
         .assert()
         .success()
