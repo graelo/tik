@@ -1,15 +1,15 @@
 /// Print a single token count (single-file or stdin mode).
-pub fn print_single(count: usize) {
+pub(crate) fn print_single(count: usize) {
     println!("{count}");
 }
 
 /// Print a filename and count in multi-file mode (tab-separated).
-pub fn print_multi(path: &str, count: usize) {
-    println!("{path}\t{count}");
+pub(crate) fn print_multi(path: &std::path::Path, count: usize) {
+    println!("{}\t{count}", path.display());
 }
 
 /// Print all available encoding names, sorted alphabetically, one per line.
-pub fn print_list_encodings() {
+pub(crate) fn print_list_encodings() {
     let mut names: Vec<&str> = tiktoken::list_encodings().to_vec();
     names.sort();
     for name in names {
@@ -18,7 +18,7 @@ pub fn print_list_encodings() {
 }
 
 /// Print model prefix → encoding mappings, sorted by prefix.
-pub fn print_list_models() {
+pub(crate) fn print_list_models() {
     let prefixes: &[(&str, &str)] = &[
         ("Codestral", "mistral_v3"),
         ("DeepSeek", "deepseek_v3"),

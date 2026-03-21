@@ -1,12 +1,13 @@
 [package]
 name = "tik"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2024"
 description = "Count LLM tokens in text files"
 license = "MIT"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
+clap_complete = "4.6.0"
 tiktoken = "3.1.2"
 
 [dev-dependencies]

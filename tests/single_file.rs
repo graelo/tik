@@ -12,37 +12,42 @@ fn single_file_default_encoding() {
     let path = dir.path().join("test.txt");
     std::fs::write(&path, "hello world").unwrap();
 
+    // "hello world" is 2 tokens with cl100k_base (default)
     tik()
         .arg(path.to_str().unwrap())
         .assert()
         .success()
-        .stdout(predicate::str::is_match(r"^\d+\n$").unwrap());
+        .stdout("2\n");
 }
 
 #[test]
 fn single_file_with_encoding_flag() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.txt");
-    std::fs::write(&path, "hello world").unwrap();
+    // Use text that produces different token counts per encoding
+    std::fs::write(&path, "日本語のテキストをトークン化する").unwrap();
 
+    // o200k_base: 12 tokens for this text
     tik()
         .args(["-e", "o200k_base", path.to_str().unwrap()])
         .assert()
         .success()
-        .stdout(predicate::str::is_match(r"^\d+\n$").unwrap());
+        .stdout("12\n");
 }
 
 #[test]
 fn single_file_with_model_flag() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.txt");
-    std::fs::write(&path, "hello world").unwrap();
+    // Use text that produces different token counts per encoding
+    std::fs::write(&path, "日本語のテキストをトークン化する").unwrap();
 
+    // gpt-4o -> o200k_base: 12 tokens
     tik()
         .args(["-m", "gpt-4o", path.to_str().unwrap()])
         .assert()
         .success()
-        .stdout(predicate::str::is_match(r"^\d+\n$").unwrap());
+        .stdout("12\n");
 }
 
 #[test]

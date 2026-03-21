@@ -5,7 +5,7 @@ use tiktoken::CoreBpe;
 
 /// Errors that can occur when processing a file.
 #[derive(Debug)]
-pub enum FileError {
+pub(crate) enum FileError {
     NotFound(String),
     Binary(String),
     Read(String, String),
@@ -22,19 +22,13 @@ impl fmt::Display for FileError {
 }
 
 /// Read a file and return its text content, detecting binary files.
-pub fn read_text_file(path: &Path) -> Result<String, FileError> {
+pub(crate) fn read_text_file(path: &Path) -> Result<String, FileError> {
     let path_str = path.display().to_string();
 
-    if !path.exists() {
-        return Err(FileError::NotFound(path_str));
-    }
-
-    let content = std::fs::read_to_string(path).map_err(|e| {
-        if e.kind() == std::io::ErrorKind::InvalidData {
-            FileError::Binary(path_str.clone())
-        } else {
-            FileError::Read(path_str.clone(), e.to_string())
-        }
+    let content = std::fs::read_to_string(path).map_err(|e| match e.kind() {
+        std::io::ErrorKind::NotFound => FileError::NotFound(path_str.clone()),
+        std::io::ErrorKind::InvalidData => FileError::Binary(path_str.clone()),
+        _ => FileError::Read(path_str.clone(), e.to_string()),
     })?;
 
     if content.contains('\0') {
@@ -45,13 +39,13 @@ pub fn read_text_file(path: &Path) -> Result<String, FileError> {
 }
 
 /// Count tokens in a file using the given encoding.
-pub fn count_file(path: &Path, enc: &CoreBpe) -> Result<usize, FileError> {
+pub(crate) fn count_file(path: &Path, enc: &CoreBpe) -> Result<usize, FileError> {
     let text = read_text_file(path)?;
     Ok(enc.count(&text))
 }
 
 /// Count tokens from stdin using the given encoding.
-pub fn count_stdin(enc: &CoreBpe) -> Result<usize, String> {
+pub(crate) fn count_stdin(enc: &CoreBpe) -> Result<usize, String> {
     let mut text = String::new();
     std::io::Read::read_to_string(&mut std::io::stdin(), &mut text)
         .map_err(|e| format!("failed to read stdin: {e}"))?;
