@@ -8,7 +8,7 @@ use tiktoken::CoreBpe;
 /// 3. TIK_ENCODING env var
 /// 4. TIK_MODEL env var
 /// 5. Default: cl100k_base
-pub fn resolve(
+pub(crate) fn resolve(
     encoding_flag: Option<&str>,
     model_flag: Option<&str>,
 ) -> Result<&'static CoreBpe, String> {

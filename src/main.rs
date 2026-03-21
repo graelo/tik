@@ -2,6 +2,7 @@ mod count;
 mod encoding;
 mod output;
 
+use std::path::PathBuf;
 use std::process::ExitCode;
 
 use clap::Parser;
@@ -27,7 +28,7 @@ struct Args {
     list_models: bool,
 
     /// Files to tokenize. Reads stdin if omitted.
-    files: Vec<String>,
+    files: Vec<PathBuf>,
 }
 
 fn main() -> ExitCode {
@@ -70,8 +71,7 @@ fn run(args: Args) -> ExitCode {
             }
         }
     } else if args.files.len() == 1 {
-        let path = std::path::Path::new(&args.files[0]);
-        match count::count_file(path, enc) {
+        match count::count_file(&args.files[0], enc) {
             Ok(n) => {
                 output::print_single(n);
                 ExitCode::SUCCESS
@@ -92,8 +92,7 @@ fn run(args: Args) -> ExitCode {
     } else {
         let mut had_error = false;
         for file in &args.files {
-            let path = std::path::Path::new(file);
-            match count::count_file(path, enc) {
+            match count::count_file(file, enc) {
                 Ok(n) => output::print_multi(file, n),
                 Err(count::FileError::Binary(_)) => {}
                 Err(count::FileError::NotFound(p)) => {
