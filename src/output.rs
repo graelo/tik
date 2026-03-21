@@ -8,6 +8,37 @@ pub(crate) fn print_multi(path: &std::path::Path, count: usize) {
     println!("{}\t{count}", path.display());
 }
 
+/// Print results as a JSON array.
+///
+/// Each entry is `{"file": "path", "token_count": N}` or `{"file": null, "token_count": N}` for
+/// stdin.
+pub(crate) fn print_json(results: &[(Option<&std::path::Path>, usize)]) {
+    print!("[");
+    for (i, (path, count)) in results.iter().enumerate() {
+        if i > 0 {
+            print!(",");
+        }
+        match path {
+            Some(p) => {
+                let escaped = p
+                    .display()
+                    .to_string()
+                    .replace('\\', "\\\\")
+                    .replace('"', "\\\"");
+                print!("\n  {{\"file\": \"{escaped}\", \"token_count\": {count}}}");
+            }
+            None => {
+                print!("\n  {{\"file\": null, \"token_count\": {count}}}");
+            }
+        }
+    }
+    if results.is_empty() {
+        println!("]");
+    } else {
+        println!("\n]");
+    }
+}
+
 /// Print all available encoding names, sorted alphabetically, one per line.
 pub(crate) fn print_list_encodings() {
     let mut names: Vec<&str> = tiktoken::list_encodings().to_vec();

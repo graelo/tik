@@ -23,6 +23,14 @@ $ cat prompt.txt | tik
 
 $ tik -m gpt-4o src/main.rs
 791
+
+$ tik --json src/*.rs
+[
+  {"file": "src/main.rs", "token_count": 832},
+  {"file": "src/encoding.rs", "token_count": 614},
+  {"file": "src/count.rs", "token_count": 597},
+  {"file": "src/output.rs", "token_count": 312}
+]
 ```
 
 ## Synopsis
@@ -39,15 +47,16 @@ models.
 
 ## Options
 
-| Flag                    | Description                                                              |
-| ----------------------- | ------------------------------------------------------------------------ |
-| `-e`, `--encoding NAME` | BPE encoding (`cl100k_base`, `o200k_base`, ...)                          |
-| `-m`, `--model NAME`    | Model name that resolves to an encoding (`gpt-4o`, `llama-3.1-70b`, ...) |
-| `--list-encodings`      | Print available encodings                                                |
-| `--list-models`         | Print model-to-encoding mappings                                         |
+| Flag                        | Description                                                                      |
+| --------------------------- | -------------------------------------------------------------------------------- |
+| `-e`, `--encoding NAME`     | BPE encoding (`cl100k_base`, `o200k_base`, ...)                                  |
+| `-m`, `--model NAME`        | Model name that resolves to an encoding (`gpt-4o`, `llama-3.1-70b`, ...)         |
+| `--list-encodings`          | Print available encodings                                                        |
+| `--json`                    | Output results as JSON                                                           |
+| `--list-models`             | Print model-to-encoding mappings                                                 |
 | `generate-completion SHELL` | Generate shell completion script (`bash`, `zsh`, `fish`, `elvish`, `powershell`) |
-| `-h`, `--help`          | Print help                                                               |
-| `-V`, `--version`       | Print version                                                            |
+| `-h`, `--help`              | Print help                                                                       |
+| `-V`, `--version`           | Print version                                                                    |
 
 `-e` and `-m` are mutually exclusive. Default encoding: `cl100k_base`.
 
@@ -65,6 +74,8 @@ Flag > env var > built-in default.
 - **Single file / stdin** — bare integer, newline-terminated.
 - **Multiple files** — tab-separated `<path>\t<count>`, one per line. Composes
   with `sort`, `awk`, `cut`.
+- **`--json`** — JSON array of `{"file": "path", "token_count": N}` objects.
+  Stdin entries use `"file": null`. Composes with `jq`.
 
 ## Installation
 

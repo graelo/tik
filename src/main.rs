@@ -28,6 +28,10 @@ struct Args {
     #[arg(long)]
     list_models: bool,
 
+    /// Output results as JSON
+    #[arg(long)]
+    json: bool,
+
     #[command(subcommand)]
     command: Option<Command>,
 
@@ -80,7 +84,11 @@ fn run(args: Args) -> ExitCode {
         }
         match count::count_stdin(enc) {
             Ok(n) => {
-                output::print_single(n);
+                if args.json {
+                    output::print_json(&[(None, n)]);
+                } else {
+                    output::print_single(n);
+                }
                 ExitCode::SUCCESS
             }
             Err(e) => {
@@ -88,31 +96,19 @@ fn run(args: Args) -> ExitCode {
                 ExitCode::FAILURE
             }
         }
-    } else if args.files.len() == 1 {
-        match count::count_file(&args.files[0], enc) {
-            Ok(n) => {
-                output::print_single(n);
-                ExitCode::SUCCESS
-            }
-            Err(count::FileError::NotFound(p)) => {
-                eprintln!("tik: {p}: No such file");
-                ExitCode::FAILURE
-            }
-            Err(count::FileError::Binary(p)) => {
-                eprintln!("tik: {p}: Binary file");
-                ExitCode::FAILURE
-            }
-            Err(count::FileError::Read(p, reason)) => {
-                eprintln!("tik: {p}: {reason}");
-                ExitCode::FAILURE
-            }
-        }
     } else {
+        let mut results: Vec<(PathBuf, usize)> = Vec::new();
         let mut had_error = false;
+
         for file in &args.files {
             match count::count_file(file, enc) {
-                Ok(n) => output::print_multi(file, n),
-                Err(count::FileError::Binary(_)) => {}
+                Ok(n) => results.push((file.clone(), n)),
+                Err(count::FileError::Binary(p)) => {
+                    if args.files.len() == 1 {
+                        eprintln!("tik: {p}: Binary file");
+                        had_error = true;
+                    }
+                }
                 Err(count::FileError::NotFound(p)) => {
                     eprintln!("tik: {p}: No such file");
                     had_error = true;
@@ -123,6 +119,23 @@ fn run(args: Args) -> ExitCode {
                 }
             }
         }
+
+        if args.json {
+            let entries: Vec<(Option<&std::path::Path>, usize)> = results
+                .iter()
+                .map(|(p, n)| (Some(p.as_path()), *n))
+                .collect();
+            output::print_json(&entries);
+        } else if args.files.len() == 1 {
+            for (_, n) in &results {
+                output::print_single(*n);
+            }
+        } else {
+            for (p, n) in &results {
+                output::print_multi(p, *n);
+            }
+        }
+
         if had_error {
             ExitCode::FAILURE
         } else {
