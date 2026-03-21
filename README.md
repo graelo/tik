@@ -45,6 +45,7 @@ models.
 | `-m`, `--model NAME`    | Model name that resolves to an encoding (`gpt-4o`, `llama-3.1-70b`, ...) |
 | `--list-encodings`      | Print available encodings                                                |
 | `--list-models`         | Print model-to-encoding mappings                                         |
+| `--completions SHELL`   | Generate shell completion script (`bash`, `zsh`, `fish`, `elvish`, `powershell`) |
 | `-h`, `--help`          | Print help                                                               |
 | `-V`, `--version`       | Print version                                                            |
 
