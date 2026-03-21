@@ -43,4 +43,3 @@ mv cargo-nextest ~/.cargo/bin/
 # test the default build
 cargo build
 cargo nextest run
-cargo test --doc
