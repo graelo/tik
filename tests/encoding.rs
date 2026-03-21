@@ -9,26 +9,28 @@ fn tik() -> Command {
 fn encoding_flag_selects_encoding() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.txt");
-    std::fs::write(&path, "hello world").unwrap();
+    std::fs::write(&path, "日本語のテキストをトークン化する").unwrap();
 
+    // o200k_base: 12 tokens (vs cl100k_base: 15, r50k_base: 18)
     tik()
         .args(["-e", "o200k_base", path.to_str().unwrap()])
         .assert()
         .success()
-        .stdout(predicate::str::is_match(r"^\d+\n$").unwrap());
+        .stdout("12\n");
 }
 
 #[test]
 fn model_flag_resolves_to_encoding() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.txt");
-    std::fs::write(&path, "hello world").unwrap();
+    std::fs::write(&path, "日本語のテキストをトークン化する").unwrap();
 
+    // gpt-4o -> o200k_base: 12 tokens
     tik()
         .args(["-m", "gpt-4o", path.to_str().unwrap()])
         .assert()
         .success()
-        .stdout(predicate::str::is_match(r"^\d+\n$").unwrap());
+        .stdout("12\n");
 }
 
 #[test]
@@ -76,16 +78,15 @@ fn env_var_tik_model() {
 fn flag_overrides_env_var() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.txt");
-    std::fs::write(&path, "hello world").unwrap();
+    std::fs::write(&path, "日本語のテキストをトークン化する").unwrap();
 
-    // Use cl100k_base via flag, even though env says o200k_base
-    // Both should produce a count, but the flag should win
+    // cl100k_base via flag (15 tokens) overrides TIK_MODEL=gpt-4o (o200k_base: 12 tokens)
     tik()
         .env("TIK_MODEL", "gpt-4o")
         .args(["-e", "cl100k_base", path.to_str().unwrap()])
         .assert()
         .success()
-        .stdout(predicate::str::is_match(r"^\d+\n$").unwrap());
+        .stdout("15\n");
 }
 
 #[test]
@@ -140,16 +141,17 @@ fn model_prefixes_across_providers() {
 fn tik_encoding_env_takes_priority_over_tik_model_env() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("test.txt");
-    std::fs::write(&path, "hello world").unwrap();
+    std::fs::write(&path, "日本語のテキストをトークン化する").unwrap();
 
-    // Both env vars set — TK_ENCODING should win
+    // Both env vars set — TIK_ENCODING should win
+    // cl100k_base: 15 tokens vs o200k_base (gpt-4o): 12 tokens
     tik()
         .env("TIK_ENCODING", "cl100k_base")
         .env("TIK_MODEL", "gpt-4o")
         .arg(path.to_str().unwrap())
         .assert()
         .success()
-        .stdout(predicate::str::is_match(r"^\d+\n$").unwrap());
+        .stdout("15\n");
 }
 
 #[test]
