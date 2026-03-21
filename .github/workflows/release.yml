@@ -173,10 +173,10 @@ jobs:
       - uses: mislav/bump-homebrew-formula-action@v3
         if: ${{ !contains(github.ref, '-') }}
         with:
-          formula-name: tokky
+          formula-name: tik
           homebrew-tap: graelo/homebrew-tap
           create-pullrequest: true
-          download-url: https://github.com/graelo/tokky/archive/refs/tags/${{ steps.extract-version.outputs.tag-name }}.tar.gz
+          download-url: https://github.com/graelo/tik/archive/refs/tags/${{ steps.extract-version.outputs.tag-name }}.tar.gz
           commit-message: |
             {{formulaName}} {{version}}
 
