@@ -3,7 +3,7 @@
 set -e
 
 CRATE=tik
-MSRV=1.88
+MSRV=1.94
 
 get_rust_version() {
   local array=($(rustc --version));
