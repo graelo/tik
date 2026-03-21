@@ -1,0 +1,15 @@
+[package]
+name = "tokky"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "Count LLM tokens in text files"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+tiktoken = "3.1.2"
+
+[dev-dependencies]
+assert_cmd = "2"
+predicates = "3"
+tempfile = "3"
