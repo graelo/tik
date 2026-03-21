@@ -1,4 +1,7 @@
 target/
+*.rs.bk
+*.prof*
+.env*
 
 .opencode/
 .claude/
