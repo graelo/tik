@@ -1,0 +1,185 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  prepare-artifacts:
+    name: Prepare release artifacts
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            gh_os: darwin
+            gh_arch: arm64
+            rust: stable
+            suffix: ''
+            archive_ext: zip
+          - os: macos-15-intel
+            target: x86_64-apple-darwin
+            gh_os: darwin
+            gh_arch: amd64
+            rust: stable
+            suffix: ''
+            archive_ext: zip
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            gh_os: linux
+            gh_arch: amd64
+            rust: stable
+            suffix: ''
+            archive_ext: tar.xz
+          - os: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+            gh_os: linux
+            gh_arch: arm64
+            rust: stable
+            suffix: ''
+            archive_ext: tar.xz
+    steps:
+      - name: Rust install
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+          components: rustfmt, clippy
+
+      - name: checkout
+        uses: actions/checkout@v6
+
+      - name: Cache crates from crates.io
+        uses: actions/cache@v5
+        continue-on-error: false
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-${{ matrix.target }}-cargo-${{ matrix.rust }}-hash-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Build Release
+        run: cargo build --release
+
+      - name: Prepare plain binary (for gh extension install)
+        run: cp target/release/${{ github.event.repository.name }}${{ matrix.suffix }} ${{ github.event.repository.name }}-${{ matrix.gh_os }}-${{ matrix.gh_arch }}${{ matrix.suffix }}
+        shell: bash
+
+      - name: Compress to zip (macOS)
+        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'macos-15-intel' }}
+        run: |
+          cp target/release/${{ github.event.repository.name }} .
+          zip -A ${{ github.event.repository.name }}-${{ matrix.target }}.${{ matrix.archive_ext }} ${{ github.event.repository.name }}
+
+      - name: Compress to tar.xz (Linux)
+        if: ${{ matrix.os == 'ubuntu-latest' || matrix.os == 'ubuntu-24.04-arm' }}
+        run: |
+          cp target/release/${{ github.event.repository.name }} .
+          tar Jcf ${{ github.event.repository.name }}-${{ matrix.target }}.${{ matrix.archive_ext }} ${{ github.event.repository.name }}
+
+      - name: List files
+        run: |
+          ls -alF .
+          ls -alF target/release/
+        shell: bash
+
+      - name: Upload archive artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.event.repository.name }}-${{ matrix.target }}.${{ matrix.archive_ext }}
+          path: ${{ github.event.repository.name }}-${{ matrix.target }}.${{ matrix.archive_ext }}
+
+      - name: Upload plain binary artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ github.event.repository.name }}-${{ matrix.gh_os }}-${{ matrix.gh_arch }}${{ matrix.suffix }}
+          path: ${{ github.event.repository.name }}-${{ matrix.gh_os }}-${{ matrix.gh_arch }}${{ matrix.suffix }}
+
+  release:
+    name: Create a GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs:
+      - prepare-artifacts
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Extract version
+        id: extract-version
+        run: |
+          echo "tag-name=${GITHUB_REF#refs/tags/}" >> ${GITHUB_OUTPUT}
+
+      - name: Download convco
+        run: |
+          git show-ref
+          curl -sSfLO https://github.com/convco/convco/releases/latest/download/convco-ubuntu.zip
+          unzip convco-ubuntu.zip
+          chmod +x convco
+
+      - name: Use convco to create the changelog
+        run: |
+          ./convco changelog -c .convco --max-versions 1 --include-hidden-sections > CHANGELOG.md
+          rm convco convco-ubuntu.zip
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ github.event.repository.name }}-x86_64-unknown-linux-gnu.tar.xz
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ github.event.repository.name }}-aarch64-unknown-linux-gnu.tar.xz
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ github.event.repository.name }}-aarch64-apple-darwin.zip
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ github.event.repository.name }}-x86_64-apple-darwin.zip
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ github.event.repository.name }}-linux-amd64
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ github.event.repository.name }}-linux-arm64
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ github.event.repository.name }}-darwin-arm64
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ github.event.repository.name }}-darwin-amd64
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: '*.zip,*.tar.xz,tik-linux-amd64,tik-linux-arm64,tik-darwin-arm64,tik-darwin-amd64'
+          bodyFile: 'CHANGELOG.md'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  homebrew:
+    name: Bump Homebrew formula
+    runs-on: ubuntu-latest
+    needs:
+      - release
+    steps:
+      - name: Extract version
+        id: extract-version
+        run: |
+          echo "tag-name=${GITHUB_REF#refs/tags/}" >> ${GITHUB_OUTPUT}
+
+      - uses: mislav/bump-homebrew-formula-action@v3
+        if: ${{ !contains(github.ref, '-') }}
+        with:
+          formula-name: tokky
+          homebrew-tap: graelo/homebrew-tap
+          create-pullrequest: true
+          download-url: https://github.com/graelo/tokky/archive/refs/tags/${{ steps.extract-version.outputs.tag-name }}.tar.gz
+          commit-message: |
+            {{formulaName}} {{version}}
+
+            Created by https://github.com/mislav/bump-homebrew-formula-action
+        env:
+          COMMITTER_TOKEN: ${{ secrets.COMMITTER_TOKEN }}
