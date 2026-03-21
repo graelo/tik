@@ -85,7 +85,7 @@ fn single_file_whitespace_only() {
 fn single_file_invalid_utf8() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("invalid.bin");
-    std::fs::write(&path, &[0xFF, 0xFE, 0x68, 0x65]).unwrap();
+    std::fs::write(&path, [0xFF, 0xFE, 0x68, 0x65]).unwrap();
 
     tik()
         .arg(path.to_str().unwrap())
