@@ -79,6 +79,12 @@ Flag > env var > built-in default.
 
 ## Installation
 
+### Homebrew
+
+```console
+brew install graelo/tap/tik
+```
+
 ### From source
 
 ```console
