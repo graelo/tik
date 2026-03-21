@@ -5,7 +5,7 @@ mod output;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use clap::{CommandFactory, Parser};
+use clap::{CommandFactory, Parser, Subcommand};
 use clap_complete::Shell;
 
 /// Count LLM tokens in text files.
@@ -28,12 +28,20 @@ struct Args {
     #[arg(long)]
     list_models: bool,
 
-    /// Generate shell completion script and exit
-    #[arg(long, value_name = "SHELL")]
-    completions: Option<Shell>,
+    #[command(subcommand)]
+    command: Option<Command>,
 
     /// Files to tokenize. Reads stdin if omitted.
     files: Vec<PathBuf>,
+}
+
+#[derive(Subcommand)]
+enum Command {
+    /// Generate shell completion script
+    GenerateCompletion {
+        /// Target shell
+        shell: Shell,
+    },
 }
 
 fn main() -> ExitCode {
@@ -42,7 +50,7 @@ fn main() -> ExitCode {
 }
 
 fn run(args: Args) -> ExitCode {
-    if let Some(shell) = args.completions {
+    if let Some(Command::GenerateCompletion { shell }) = args.command {
         clap_complete::generate(shell, &mut Args::command(), "tik", &mut std::io::stdout());
         return ExitCode::SUCCESS;
     }
