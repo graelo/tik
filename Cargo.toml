@@ -2,8 +2,8 @@
 name = "tik"
 version = "0.1.0"
 edition = "2024"
-license = "MIT"
 description = "Count LLM tokens in text files"
+license = "MIT"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
