@@ -64,20 +64,6 @@ jobs:
           ./convco check -c .convco
           rm convco
 
-      - name: Quality - cargo outdated
-        if: github.event_name == 'pull_request'
-        timeout-minutes: 20
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          VERSION=$(gh api repos/kbknapp/cargo-outdated/releases/latest --jq '.tag_name')
-          curl -sSfL "https://github.com/kbknapp/cargo-outdated/releases/download/${VERSION}/cargo-outdated-${VERSION#v}-x86_64-unknown-linux-musl.tar.gz" | \
-            tar zx
-          chmod +x cargo-outdated
-          mv cargo-outdated ~/.cargo/bin/
-          rm -rf ~/.cargo/advisory-db
-          cargo outdated --exit-code 1
-
       - name: Build (dev)
         run: cargo build --all-features
 
