@@ -27,19 +27,30 @@ if ! check_version $MSRV ; then
   exit 1
 fi
 
+FEATURES=()
+echo "Testing supported features: ${FEATURES[*]}"
+
+NEXTEST_PROFILE=""
+if [ -n "$CI" ]; then
+  NEXTEST_PROFILE="--profile ci"
+fi
+
 set -x
 
-# Install cargo-nextest (pre-built binary)
-case "$(uname -s)-$(uname -m)" in
-  Linux-x86_64)  NEXTEST_PLATFORM="x86_64-unknown-linux-gnu.tar.gz" ;;
-  Linux-aarch64) NEXTEST_PLATFORM="aarch64-unknown-linux-gnu.tar.gz" ;;
-  Darwin-*)      NEXTEST_PLATFORM="universal-apple-darwin.tar.gz" ;;
-  *)             echo "Unsupported platform for cargo-nextest"; exit 1 ;;
-esac
-curl -sSfL "https://get.nexte.st/latest/${NEXTEST_PLATFORM}" | tar zx
-chmod +x cargo-nextest
-mv cargo-nextest ~/.cargo/bin/
-
-# test the default build
+# test the default
 cargo build
-cargo nextest run
+cargo nextest run $NEXTEST_PROFILE
+
+# test no_std / no-default-features
+cargo build --no-default-features
+cargo nextest run $NEXTEST_PROFILE --no-default-features
+
+# test each feature in isolation
+for feature in "${FEATURES[@]}"; do
+  cargo build --no-default-features --features="$feature"
+  cargo nextest run $NEXTEST_PROFILE --no-default-features --features="$feature"
+done
+
+# test all features combined
+cargo build --features="${FEATURES[*]}"
+cargo nextest run $NEXTEST_PROFILE --features="${FEATURES[*]}"
