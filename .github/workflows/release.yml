@@ -6,9 +6,13 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.run_id }}
+  cancel-in-progress: false
+
 jobs:
   prepare-artifacts:
-    name: Prepare release artifacts
+    name: Build artifacts
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
@@ -44,7 +48,7 @@ jobs:
             suffix: ''
             archive_ext: tar.xz
     steps:
-      - name: Rust install
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # master
         with:
           toolchain: ${{ matrix.rust }}
@@ -119,7 +123,7 @@ jobs:
           retention-days: 1
 
   release:
-    name: Create a GitHub Release
+    name: Publish release
     runs-on: ubuntu-latest
     permissions:
       contents: write

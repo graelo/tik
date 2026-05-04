@@ -2,7 +2,7 @@
 
 Count LLM tokens in text files.
 
-[![CI](https://github.com/graelo/tik/actions/workflows/essentials.yml/badge.svg)](https://github.com/graelo/tik/actions/workflows/essentials.yml)
+[![CI](https://github.com/graelo/tik/actions/workflows/ci-essentials.yml/badge.svg)](https://github.com/graelo/tik/actions/workflows/ci-essentials.yml)
 [![MSRV](https://img.shields.io/badge/MSRV-1.94-blue)](https://github.com/graelo/tik)
 [![license](https://img.shields.io/crates/l/tik.svg)](LICENSE)
 
