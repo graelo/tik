@@ -2,6 +2,7 @@
 name = "tik"
 version = "0.1.1"
 edition = "2024"
+rust-version = "1.95"
 description = "Count LLM tokens in text files"
 license = "MIT OR Apache-2.0"
 

@@ -3,7 +3,7 @@
 Count LLM tokens in text files.
 
 [![build status](https://github.com/graelo/tik/actions/workflows/ci-essentials.yml/badge.svg)](https://github.com/graelo/tik/actions)
-[![rustc 1.94+](https://img.shields.io/badge/rustc-1.94+-blue.svg)](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
+[![rustc 1.95](https://img.shields.io/badge/rustc-1.95-blue.svg)](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
 [![edition 2024](https://img.shields.io/badge/edition-2024-blue.svg)](https://doc.rust-lang.org/edition-guide/rust-2024/index.html)
 [![crate](https://img.shields.io/crates/v/tik.svg)](https://crates.io/crates/tik)
 
