@@ -8,6 +8,32 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-05-14
+
+### Added
+
+- Windows release binaries (`x86_64-pc-windows-msvc`,
+  `aarch64-pc-windows-msvc`) alongside the existing macOS and Linux musl
+  targets
+
+### Changed
+
+- Bump Minimum Supported Rust Version (MSRV) to 1.95
+- Release builds now use `cargo build --locked` for reproducibility
+- Clarify dual licensing (MIT OR Apache-2.0) in README and align badges
+  with the project's documentation style
+- Dependency patch updates (via Renovate)
+
+### Security
+
+- Tighten CI security baseline with `--locked` builds and zizmor cleanup
+- Adopt CI playbook conventions: explicit concurrency, least-privilege
+  per-job permissions, and refreshed pinned action SHAs
+- Restore poutine workflow analysis by removing the stale `.poutine.yml`
+  and switching to the supported config layout
+- Renovate now waits 3 days (`minimumReleaseAge`) before opening dependency
+  PRs to reduce exposure to compromised upstream releases
+
 ## [0.1.1] - 2026-04-17
 
 ### Changed
