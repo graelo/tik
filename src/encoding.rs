@@ -35,20 +35,14 @@ fn get_by_encoding_name(name: &str) -> Result<&'static CoreBpe, String> {
     tiktoken::get_encoding(name).ok_or_else(|| {
         let mut encodings: Vec<&str> = tiktoken::list_encodings().to_vec();
         encodings.sort();
-        format!(
-            "unknown encoding '{}'. Valid encodings: {}",
-            name,
-            encodings.join(", ")
-        )
+        let valid = encodings.join(", ");
+        format!("unknown encoding '{name}'. Valid encodings: {valid}")
     })
 }
 
 fn get_by_model_name(name: &str) -> Result<&'static CoreBpe, String> {
     tiktoken::encoding_for_model(name).ok_or_else(|| {
-        format!(
-            "unknown model '{}'. Use --list-models to see recognized prefixes",
-            name
-        )
+        format!("unknown model '{name}'. Use --list-models to see recognized prefixes")
     })
 }
 
