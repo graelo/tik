@@ -2,9 +2,10 @@
 
 Count LLM tokens in text files.
 
-[![CI](https://github.com/graelo/tik/actions/workflows/essentials.yml/badge.svg)](https://github.com/graelo/tik/actions/workflows/essentials.yml)
-[![MSRV](https://img.shields.io/badge/MSRV-1.94-blue)](https://github.com/graelo/tik)
-[![license](https://img.shields.io/crates/l/tik.svg)](LICENSE)
+[![build status](https://github.com/graelo/tik/actions/workflows/ci-essentials.yml/badge.svg)](https://github.com/graelo/tik/actions)
+[![rustc 1.95](https://img.shields.io/badge/rustc-1.95-blue.svg)](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
+[![edition 2024](https://img.shields.io/badge/edition-2024-blue.svg)](https://doc.rust-lang.org/edition-guide/rust-2024/index.html)
+[![crate](https://img.shields.io/crates/v/tik.svg)](https://crates.io/crates/tik)
 
 ## Example
 
@@ -98,4 +99,18 @@ the [releases page](https://github.com/graelo/tik/releases).
 
 ## License
 
-MIT
+Licensed under either of:
+
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
+  <https://www.apache.org/licenses/LICENSE-2.0>)
+- MIT license ([LICENSE-MIT](LICENSE-MIT) or
+  <https://opensource.org/licenses/MIT>)
+
+at your option.
+
+### Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally
+submitted for inclusion in the work by you, as defined in the Apache-2.0
+license, shall be dual licensed as above, without any additional terms or
+conditions.
