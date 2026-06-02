@@ -8,6 +8,17 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-06-02
+
+### Changed
+
+- Dependency minor and patch updates (via Renovate)
+- Align CI workflows with playbook v1.1 conventions and matrix job conventions
+
+### Fixed
+
+- Drop `cargo test --doc` from CI (binary-only crate has no lib target)
+
 ## [0.1.2] - 2026-05-14
 
 ### Added
