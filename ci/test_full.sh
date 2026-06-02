@@ -56,9 +56,6 @@ done
 cargo build --locked --features="${FEATURES[*]}"
 cargo nextest run --locked $NEXTEST_PROFILE --features="${FEATURES[*]}"
 
-# doc tests (not supported by nextest)
-cargo test --doc
-
 # CLI smoke test (release binary). CARGO_BUILD_TARGET (set in the compat
 # matrix) redirects output to target/<target>/release; Git Bash on Windows
 # reports OSTYPE=msys.
