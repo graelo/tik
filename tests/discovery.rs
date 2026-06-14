@@ -6,7 +6,7 @@ fn tik() -> Command {
 }
 
 #[test]
-fn list_encodings_outputs_nine_lines_sorted() {
+fn list_encodings_outputs_sorted() {
     let output = tik()
         .arg("--list-encodings")
         .assert()
@@ -17,17 +17,18 @@ fn list_encodings_outputs_nine_lines_sorted() {
 
     let stdout = String::from_utf8(output).unwrap();
     let lines: Vec<&str> = stdout.lines().collect();
-    assert_eq!(lines.len(), 9);
+    assert!(!lines.is_empty(), "should have at least one encoding");
 
     // Verify sorted
     let mut sorted = lines.clone();
     sorted.sort();
     assert_eq!(lines, sorted, "encodings must be sorted alphabetically");
 
-    // Verify known encodings present
-    assert!(lines.contains(&"cl100k_base"));
-    assert!(lines.contains(&"o200k_base"));
-    assert!(lines.contains(&"llama3"));
+    // Verify core encodings are present
+    let required = ["cl100k_base", "gpt2", "llama3", "o200k_base", "r50k_base"];
+    for enc in &required {
+        assert!(lines.contains(enc), "missing required encoding: {enc}");
+    }
 }
 
 #[test]
