@@ -1,0 +1,123 @@
+.TH TIK 1 "2026-06-02" "tik 0.1.3" "User Commands"
+.SH NAME
+tik \- count BPE tokens in text files
+.SH SYNOPSIS
+.B tik
+.RI [ OPTIONS ]
+.RI [ FILE... ]
+.br
+.B tik generate-completion
+.I SHELL
+.SH DESCRIPTION
+.B tik
+counts BPE tokens in text files or standard input.
+When no files are provided, input is read from standard input.
+For a single file or standard input, only the token count is printed.
+For multiple files, each line contains the file name and token count,
+separated by a tab.
+.PP
+Binary files are silently skipped in multi-file mode.
+A binary file supplied by itself is an error.
+.SH OPTIONS
+.SS Encoding Selection
+.TP
+.BR \-e ", " \-\-encoding " " \fINAME\fR
+BPE encoding name, such as
+.BR cl100k_base " or " o200k_base .
+.TP
+.BR \-m ", " \-\-model " " \fINAME\fR
+Model name that resolves to an encoding, such as
+.BR gpt-4o " or " llama-3.1-70b .
+The
+.B \-e
+and
+.B \-m
+options are mutually exclusive.
+.TP
+.B \-\-list-encodings
+Print available encoding names and exit.
+.TP
+.B \-\-list-models
+Print recognized model-prefix to encoding mappings and exit.
+.SS Output
+.TP
+.B \-\-json
+Output a JSON array instead of plain text.
+Each entry contains a
+.B file
+field and a
+.B token_count
+field.
+For standard input,
+.B file
+is
+.BR null .
+.SS Shell Completion
+.TP
+.BR generate-completion " " \fISHELL\fR
+Generate a completion script for
+.BR bash ", " zsh ", " fish ", " elvish ", or " powershell .
+.SH ENVIRONMENT
+.TP
+.B TIK_ENCODING
+Default BPE encoding, overridden by
+.BR \-e " or " \-\-encoding .
+.TP
+.B TIK_MODEL
+Default model, overridden by
+.BR \-m " or " \-\-model .
+.PP
+Flag values take precedence over environment variables.
+The built-in default encoding is
+.BR cl100k_base .
+.SH EXAMPLES
+Count tokens in one file:
+.PP
+.RS
+.nf
+tik README.md
+.fi
+.RE
+.PP
+Count tokens in multiple files:
+.PP
+.RS
+.nf
+tik src/*.rs
+.fi
+.RE
+.PP
+Read from standard input:
+.PP
+.RS
+.nf
+cat prompt.txt | tik
+.fi
+.RE
+.PP
+Use a model-specific encoding:
+.PP
+.RS
+.nf
+tik --model gpt-4o src/main.rs
+.fi
+.RE
+.PP
+Produce machine-readable output:
+.PP
+.RS
+.nf
+tik --json src/*.rs | jq
+.fi
+.RE
+.SH EXIT STATUS
+.TP
+.B 0
+The input was processed successfully.
+.TP
+.B 1
+An invalid option, encoding, model, input, or file was encountered.
+.SH SEE ALSO
+.BR jq (1)
+.SH AUTHORS
+graelo <https://github.com/graelo/tik>

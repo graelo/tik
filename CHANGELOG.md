@@ -8,6 +8,20 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Add a canonical `Makefile` for local formatting, linting, testing, audits,
+  documentation checks, and release tasks
+- Add a `tik(1)` manpage covering the CLI, environment variables, and output
+  formats
+- Add `AGENTS.md` with repository architecture, verification, and release
+  guidance
+
+### Changed
+
+- Document the Makefile-based verification workflow in the README
+- Add rumdl configuration with aligned Markdown table checking
+
 ## [0.1.3] - 2026-06-02
 
 ### Changed
