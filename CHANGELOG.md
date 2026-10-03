@@ -21,6 +21,8 @@ and this project adheres to
 
 - Document the Makefile-based verification workflow in the README
 - Add rumdl configuration with aligned Markdown table checking
+- Include hidden commit sections in release changelog and align the release
+  workflow with the playbook reference
 
 ## [0.1.3] - 2026-06-02
 
