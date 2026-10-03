@@ -24,6 +24,13 @@ and this project adheres to
 - Include hidden commit sections in release changelog and align the release
   workflow with the playbook reference
 
+### Removed
+
+- Drop Windows support: remove the Windows targets from the CI platform
+  matrix and stop publishing Windows release binaries. The `tiktoken` 4.x
+  dependency overflows the 1 MiB main-thread stack on Windows when
+  tokenizing non-ASCII text, and upstream does not test on Windows
+
 ## [0.1.3] - 2026-06-02
 
 ### Changed

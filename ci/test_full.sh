@@ -57,12 +57,8 @@ cargo build --locked --features="${FEATURES[*]}"
 cargo nextest run --locked $NEXTEST_PROFILE --features="${FEATURES[*]}"
 
 # CLI smoke test (release binary). CARGO_BUILD_TARGET (set in the compat
-# matrix) redirects output to target/<target>/release; Git Bash on Windows
-# reports OSTYPE=msys.
+# matrix) redirects output to target/<target>/release.
 cargo build --locked --release
 
 BIN="target/${CARGO_BUILD_TARGET:+${CARGO_BUILD_TARGET}/}release/tik"
-case "${OSTYPE:-}" in
-  msys*|cygwin*) BIN="${BIN}.exe" ;;
-esac
 "${BIN}" --help

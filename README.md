@@ -98,6 +98,8 @@ cargo install --git https://github.com/graelo/tik
 Pre-built binaries for macOS (ARM, x86) and Linux (x86, ARM) are available on
 the [releases page](https://github.com/graelo/tik/releases).
 
+Windows is not supported: `tik` is neither tested nor released on Windows.
+
 ## Development
 
 The [`Makefile`](Makefile) is the canonical definition of local verification
