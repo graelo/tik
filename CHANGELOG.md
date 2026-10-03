@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- CI installs Rust with the `actions-rust-lang/setup-rust-toolchain` action
+  pinned to the immutable `v2.0.0` tag, replacing the untagged
+  `dtolnay/rust-toolchain` branch pin that triggered zizmor's
+  `ref-version-mismatch` alerts; cargo invocations now deny warnings via
+  the action's `build-warnings` default
+
 ## [0.2.0] - 2026-10-03
 
 ### Added
