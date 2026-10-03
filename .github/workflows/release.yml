@@ -33,22 +33,12 @@ jobs:
         include:
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
-            archive: tar.xz
           - target: aarch64-unknown-linux-musl
             os: ubuntu-24.04-arm
-            archive: tar.xz
           - target: x86_64-apple-darwin
             os: macos-15-intel
-            archive: tar.xz
           - target: aarch64-apple-darwin
             os: macos-latest
-            archive: tar.xz
-          - target: x86_64-pc-windows-msvc
-            os: windows-latest
-            archive: zip
-          - target: aarch64-pc-windows-msvc
-            os: windows-11-arm
-            archive: zip
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -74,18 +64,13 @@ jobs:
       - name: Stage binary and archive
         env:
           TARGET: ${{ matrix.target }}
-          ARCHIVE_FORMAT: ${{ matrix.archive }}
           TAG: ${{ github.ref_name }}
           BIN: tik
         run: |
           set -euo pipefail
-          EXT=""
-          if [[ "${TARGET}" == *-windows-* ]]; then
-            EXT=".exe"
-          fi
-          SRC="target/${TARGET}/release/${BIN}${EXT}"
+          SRC="target/${TARGET}/release/${BIN}"
 
-          BINARY_FILE="${BIN}-${TARGET}${EXT}"
+          BINARY_FILE="${BIN}-${TARGET}"
           cp "${SRC}" "${BINARY_FILE}"
 
           PKG_DIR="${BIN}-${TAG}-${TARGET}"
@@ -93,13 +78,8 @@ jobs:
           cp "${SRC}" "${PKG_DIR}/"
           cp README.md LICENSE* "${PKG_DIR}/" 2>/dev/null || true
 
-          if [[ "${ARCHIVE_FORMAT}" == "zip" ]]; then
-            ARCHIVE_FILE="${PKG_DIR}.zip"
-            7z a "${ARCHIVE_FILE}" "${PKG_DIR}" >/dev/null
-          else
-            ARCHIVE_FILE="${PKG_DIR}.tar.xz"
-            tar -cJf "${ARCHIVE_FILE}" "${PKG_DIR}"
-          fi
+          ARCHIVE_FILE="${PKG_DIR}.tar.xz"
+          tar -cJf "${ARCHIVE_FILE}" "${PKG_DIR}"
 
           echo "BINARY_FILE=${BINARY_FILE}" >> "${GITHUB_ENV}"
           echo "ARCHIVE_FILE=${ARCHIVE_FILE}" >> "${GITHUB_ENV}"
