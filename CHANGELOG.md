@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-03
+
 ### Added
 
 - Add a canonical `Makefile` for local formatting, linting, testing, audits,
@@ -107,3 +109,6 @@ and this project adheres to
 - `generate-completion` subcommand for shell completion scripts (bash, zsh,
   fish, PowerShell)
 - Read from files or stdin
+
+[Unreleased]: https://github.com/graelo/tik/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/graelo/tik/compare/v0.1.3...v0.2.0
