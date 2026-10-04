@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Add a local `.cargo/config.toml` that denies cargo warnings (e.g.
+  `cargo::unused_dependencies`), matching the warnings CI denies via the
+  `actions-rust-lang/setup-rust-toolchain` action
+
 ### Changed
 
 - CI installs Rust with the `actions-rust-lang/setup-rust-toolchain` action
