@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-13
+
 ### Added
 
 - Add a local `.cargo/config.toml` that denies cargo warnings (e.g.
@@ -21,6 +23,12 @@ and this project adheres to
   `dtolnay/rust-toolchain` branch pin that triggered zizmor's
   `ref-version-mismatch` alerts; cargo invocations now deny warnings via
   the action's `build-warnings` default
+
+### Fixed
+
+- Bump `ruzstd` to 0.9.1, resolving RUSTSEC-2026-0344 (a decompression
+  bomb letting a crafted `.zst` input under 128 KB force multi-gigabyte
+  allocations); `ruzstd` reaches `tik` through `tiktoken`
 
 ## [0.2.0] - 2026-10-03
 
@@ -124,5 +132,6 @@ and this project adheres to
   fish, PowerShell)
 - Read from files or stdin
 
-[Unreleased]: https://github.com/graelo/tik/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/graelo/tik/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/graelo/tik/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/graelo/tik/compare/v0.1.3...v0.2.0
